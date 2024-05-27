@@ -10,7 +10,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class BankSerializer(serializers.ModelSerializer):
-    users = serializers.PrimaryKeyRelatedField(many=True, queryset=User.objects.all())
+    users = UserSerializer(many=True, required=False)
 
     class Meta:
         model = Bank

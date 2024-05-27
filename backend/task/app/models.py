@@ -6,4 +6,4 @@ class Bank(models.Model):
     bank_name = models.CharField(max_length=100)
     routing_number = models.CharField(max_length=9, unique=True)
     swift_bic = models.CharField(max_length=11, unique=True)
-    users = models.ManyToManyField(User, related_name='banks')
+    users = models.ManyToManyField(User, related_name="banks", blank=True)
