@@ -3,6 +3,8 @@ export interface IAppService {
     getBanks(): Promise<IBank[]>;
     uploadBank(data: IBank): Promise<any>;
     uploadUser(data: IUser): Promise<any>;
+    getRandomUsers(count: number): Promise<IUser[]>;
+    getRandomBanks(count: number): Promise<IBank[]>;
 }
 
 export interface IUser {
