@@ -21,6 +21,9 @@ const BanksPage = () => {
 
     const handleAddBanks = async () => {
         const newBanks = await AppService.getRandomBanks(addCount);
+        newBanks.forEach(async (bank: IBank) => {
+            AppService.uploadBank(bank)
+        });
         setBanks([...banks, ...newBanks]);
     };
 

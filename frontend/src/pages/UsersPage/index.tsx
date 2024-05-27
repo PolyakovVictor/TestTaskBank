@@ -5,6 +5,7 @@ import { AppService } from '../../sevices/app.service';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
+
 const UsersPage = () => {
     const [users, setUsers] = useState<IUser[]>([]);
     const [addCount, setAddCount] = useState(1);
@@ -20,6 +21,9 @@ const UsersPage = () => {
 
     const handleAddUsers = async () => {
         const newUsers = await AppService.getRandomUsers(addCount);
+        newUsers.forEach(async (user: IUser) => {
+            AppService.uploadUser(user)
+        });
         setUsers([...users, ...newUsers]);
     };
 
