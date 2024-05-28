@@ -1,7 +1,6 @@
+from rest_framework import viewsets, status
 from rest_framework.response import Response
-from rest_framework import viewsets
-from django.contrib.auth.models import User
-from .models import Bank
+from .models import User, Bank
 from .serializers import UserSerializer, BankSerializer
 
 
@@ -18,7 +17,7 @@ class BankViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         if instance.users.exists():
             return Response(
-                {"error": "Bank cannot be deleted as it has associated users."},
-                status=400,
+                {"error": "Cannot delete bank with associated users."},
+                status=status.HTTP_400_BAD_REQUEST,
             )
         return super().destroy(request, *args, **kwargs)

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, IconButton, TextField, Box } from '@mui/material';
-import { IBank } from '../../models/interfeces';
-import { AppService } from '../../sevices/app.service';
+import { IBank } from '../../models/interfaces';
+import { AppService } from '../../services/app.service';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 

@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { IAppService, IBank, IUser } from '../models/interfeces';
+import { IAppService, IBank, IUser } from '../models/interfaces';
 
 export const AppService: IAppService = {
 
@@ -73,6 +73,7 @@ export const AppService: IAppService = {
             return response.data.map((user: IUser) => ({
                 id: user.id,
                 username: user.username,
+                password: user.password,
                 first_name: user.first_name,
                 last_name: user.last_name,
                 email: user.email,
@@ -110,7 +111,28 @@ export const AppService: IAppService = {
 
     async deleteUser(userId) {
         try {
-            const response = await axios.delete(process.env.REACT_APP_API_URL + `api/banks/${userId}`);
+            const response = await axios.delete(process.env.REACT_APP_API_URL + `api/users/${userId}`);
+            return response.data;
+        } catch (error) {
+            console.error('Error when sending a request:', error);
+            throw error;
+        }
+    },
+
+    async updateUser(id, data) {
+        try {
+            console.log('user update:', data)
+            const response = await axios.put(process.env.REACT_APP_API_URL + `api/users/${id}/`, data);
+            return response.data;
+        } catch (error) {
+            console.error('Error when sending a request:', error);
+            throw error;
+        }
+    },
+
+    async updateBank(id, data) {
+        try {
+            const response = await axios.put(process.env.REACT_APP_API_URL + `api/banks/${id}/`, data);
             return response.data;
         } catch (error) {
             console.error('Error when sending a request:', error);

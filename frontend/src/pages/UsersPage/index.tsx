@@ -1,20 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, IconButton, TextField, Box, Dialog, DialogTitle, DialogContent, DialogActions, MenuItem, Select } from '@mui/material';
-import { IUser } from '../../models/interfeces';
-import { AppService } from '../../sevices/app.service';
+import {
+    Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, IconButton, TextField, Box, Dialog, DialogTitle, DialogContent, DialogActions, MenuItem, Select
+} from '@mui/material';
+import { IUser } from '../../models/interfaces';
+import { IBank } from '../../models/interfaces';
+import { AppService } from '../../services/app.service';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 const UsersPage = () => {
     const [users, setUsers] = useState<IUser[]>([]);
+    const [banks, setBanks] = useState<IBank[]>([]);
     const [addCount, setAddCount] = useState(1);
     const [editUser, setEditUser] = useState<IUser | null>(null);
     const [openEditDialog, setOpenEditDialog] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await AppService.getUsers();
-            setUsers(response);
+            const usersResponse = await AppService.getUsers();
+            setUsers(usersResponse);
+            const banksResponse = await AppService.getBanks();
+            setBanks(banksResponse);
         };
 
         fetchData();
@@ -23,7 +29,7 @@ const UsersPage = () => {
     const handleAddUsers = async () => {
         const newUsers = await AppService.getRandomUsers(addCount);
         newUsers.forEach(async (user: IUser) => {
-            AppService.uploadUser(user)
+            await AppService.uploadUser(user);
         });
         setUsers([...users, ...newUsers]);
     };
@@ -34,21 +40,30 @@ const UsersPage = () => {
     };
 
     const handleDelete = async (id: number) => {
-        try {
-            await AppService.deleteUser(id);
-            setUsers(users.filter(user => user.id !== id));
-        } catch (error) {
-            console.error('Failed to delete user:', error);
-        }
+        await AppService.deleteUser(id);
+        setUsers(users.filter(user => user.id !== id));
     };
 
     const handleCloseEditDialog = () => {
         setOpenEditDialog(false);
+        setEditUser(null);
     };
 
-    const handleSaveEdit = () => {
+    const handleSave = async () => {
+        if (editUser) {
+            const updatedUser = await AppService.updateUser(editUser.id, {
+                ...editUser,
+                banks: editUser.banks?.map(bank => (typeof bank === 'object' ? bank.id : bank)) || [] // Проверка на undefined и тип объекта
+            });
+            setUsers(users.map(user => user.id === updatedUser.id ? updatedUser : user));
+            setEditUser(null);
+        }
+    };
 
-        setOpenEditDialog(false);
+    const handleEditChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
+        if (editUser) {
+            setEditUser({ ...editUser, [e.target.name as string]: e.target.value });
+        }
     };
 
     return (
@@ -103,13 +118,69 @@ const UsersPage = () => {
             <Dialog open={openEditDialog} onClose={handleCloseEditDialog}>
                 <DialogTitle>Edit User</DialogTitle>
                 <DialogContent>
+                    <TextField
+                        margin="dense"
+                        label="Username"
+                        type="text"
+                        fullWidth
+                        name="username"
+                        value={editUser?.username || ''}
+                        onChange={handleEditChange}
+                    />
+                    <TextField
+                        margin="dense"
+                        label="First Name"
+                        type="text"
+                        fullWidth
+                        name="first_name"
+                        value={editUser?.first_name || ''}
+                        onChange={handleEditChange}
+                    />
+                    <TextField
+                        margin="dense"
+                        label="Last Name"
+                        type="text"
+                        fullWidth
+                        name="last_name"
+                        value={editUser?.last_name || ''}
+                        onChange={handleEditChange}
+                    />
+                    <TextField
+                        margin="dense"
+                        label="Email"
+                        type="email"
+                        fullWidth
+                        name="email"
+                        value={editUser?.email || ''}
+                        onChange={handleEditChange}
+                    />
+                    <Select
+                        multiple
+                        value={editUser?.banks?.filter(bank => typeof bank !== 'number').map(bank => (bank as IBank).id) || []}
+                        onChange={(e) => {
+                            const selectedBanks = e.target.value as number[];
+                            if (editUser) {
+                                setEditUser({
+                                    ...editUser,
+                                    banks: selectedBanks.map(id => banks.find(bank => bank.id === id) as IBank)
+                                });
+                            }
+                        }}
+                        fullWidth
+                    >
 
+                        {banks.map((bank) => (
+                            <MenuItem key={bank.id} value={bank.id}>
+                                {bank.bank_name}
+                            </MenuItem>
+                        ))}
+                    </Select>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseEditDialog} color="primary">
                         Cancel
                     </Button>
-                    <Button onClick={handleSaveEdit} color="primary">
+                    <Button onClick={handleSave} color="primary">
                         Save
                     </Button>
                 </DialogActions>
