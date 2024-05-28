@@ -7,6 +7,7 @@ import { IBank } from '../../models/interfaces';
 import { AppService } from '../../services/app.service';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditUserDialog from '../../components/UserEditWindow';
 
 const UsersPage = () => {
     const [users, setUsers] = useState<IUser[]>([]);
@@ -53,7 +54,7 @@ const UsersPage = () => {
         if (editUser) {
             const updatedUser = await AppService.updateUser(editUser.id, {
                 ...editUser,
-                banks: editUser.banks?.map(bank => (typeof bank === 'object' ? bank.id : bank)) || [] // Проверка на undefined и тип объекта
+                banks: editUser.banks?.map(bank => (typeof bank === 'object' ? bank.id : bank)) || []
             });
             setUsers(users.map(user => user.id === updatedUser.id ? updatedUser : user));
             setEditUser(null);
@@ -115,76 +116,13 @@ const UsersPage = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
-            <Dialog open={openEditDialog} onClose={handleCloseEditDialog}>
-                <DialogTitle>Edit User</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        margin="dense"
-                        label="Username"
-                        type="text"
-                        fullWidth
-                        name="username"
-                        value={editUser?.username || ''}
-                        onChange={handleEditChange}
-                    />
-                    <TextField
-                        margin="dense"
-                        label="First Name"
-                        type="text"
-                        fullWidth
-                        name="first_name"
-                        value={editUser?.first_name || ''}
-                        onChange={handleEditChange}
-                    />
-                    <TextField
-                        margin="dense"
-                        label="Last Name"
-                        type="text"
-                        fullWidth
-                        name="last_name"
-                        value={editUser?.last_name || ''}
-                        onChange={handleEditChange}
-                    />
-                    <TextField
-                        margin="dense"
-                        label="Email"
-                        type="email"
-                        fullWidth
-                        name="email"
-                        value={editUser?.email || ''}
-                        onChange={handleEditChange}
-                    />
-                    <Select
-                        multiple
-                        value={editUser?.banks?.filter(bank => typeof bank !== 'number').map(bank => (bank as IBank).id) || []}
-                        onChange={(e) => {
-                            const selectedBanks = e.target.value as number[];
-                            if (editUser) {
-                                setEditUser({
-                                    ...editUser,
-                                    banks: selectedBanks.map(id => banks.find(bank => bank.id === id) as IBank)
-                                });
-                            }
-                        }}
-                        fullWidth
-                    >
-
-                        {banks.map((bank) => (
-                            <MenuItem key={bank.id} value={bank.id}>
-                                {bank.bank_name}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseEditDialog} color="primary">
-                        Cancel
-                    </Button>
-                    <Button onClick={handleSave} color="primary">
-                        Save
-                    </Button>
-                </DialogActions>
-            </Dialog>
+            <EditUserDialog
+                open={openEditDialog}
+                onClose={handleCloseEditDialog}
+                user={editUser}
+                banks={banks}
+                onSave={handleSave}
+            />
         </Container>
     );
 };
