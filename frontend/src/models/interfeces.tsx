@@ -5,6 +5,8 @@ export interface IAppService {
     uploadUser(data: IUser): Promise<any>;
     getRandomUsers(count: number): Promise<IUser[]>;
     getRandomBanks(count: number): Promise<IBank[]>;
+    deleteBank(bankId: number): Promise<any>;
+    deleteUser(userId: number): Promise<any>;
 }
 
 export interface IUser {
@@ -13,6 +15,7 @@ export interface IUser {
     first_name: string,
     last_name: string,
     email: string,
+    banks?: IBank[],
 }
 
 export interface IBank {
@@ -20,5 +23,5 @@ export interface IBank {
     bank_name: string;
     routing_number: string;
     swift_bic: string;
-    users: IUser[];
+    users?: IUser[];
 }

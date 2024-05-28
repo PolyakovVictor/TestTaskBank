@@ -97,4 +97,24 @@ export const AppService: IAppService = {
             throw error;
         }
     },
+
+    async deleteBank(bankId) {
+        try {
+            const response = await axios.delete(process.env.REACT_APP_API_URL + `api/banks/${bankId}`);
+            return response.data;
+        } catch (error) {
+            console.error('Error when sending a request:', error);
+            throw error;
+        }
+    },
+
+    async deleteUser(userId) {
+        try {
+            const response = await axios.delete(process.env.REACT_APP_API_URL + `api/banks/${userId}`);
+            return response.data;
+        } catch (error) {
+            console.error('Error when sending a request:', error);
+            throw error;
+        }
+    },
 }

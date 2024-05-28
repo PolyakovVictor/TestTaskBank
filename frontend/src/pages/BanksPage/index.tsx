@@ -31,8 +31,13 @@ const BanksPage = () => {
         console.log(`Edit bank with id ${id}`);
     };
 
-    const handleDelete = (id: number) => {
-        console.log(`Delete bank with id ${id}`);
+    const handleDelete = async (id: number) => {
+        try {
+            await AppService.deleteBank(id);
+            setBanks(banks.filter(bank => bank.id !== id));
+        } catch (error) {
+            console.error('Failed to delete bank:', error);
+        }
     };
 
     return (

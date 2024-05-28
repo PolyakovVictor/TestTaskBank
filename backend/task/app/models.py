@@ -7,3 +7,6 @@ class Bank(models.Model):
     routing_number = models.CharField(max_length=9, unique=True)
     swift_bic = models.CharField(max_length=11, unique=True)
     users = models.ManyToManyField(User, related_name="banks", blank=True)
+
+    def __str__(self):
+        return self.bank_name

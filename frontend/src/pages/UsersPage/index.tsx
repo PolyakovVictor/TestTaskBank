@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, IconButton, TextField, Box } from '@mui/material';
+import { Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, IconButton, TextField, Box, Dialog, DialogTitle, DialogContent, DialogActions, MenuItem, Select } from '@mui/material';
 import { IUser } from '../../models/interfeces';
 import { AppService } from '../../sevices/app.service';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-
 const UsersPage = () => {
     const [users, setUsers] = useState<IUser[]>([]);
     const [addCount, setAddCount] = useState(1);
+    const [editUser, setEditUser] = useState<IUser | null>(null);
+    const [openEditDialog, setOpenEditDialog] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -27,12 +28,27 @@ const UsersPage = () => {
         setUsers([...users, ...newUsers]);
     };
 
-    const handleEdit = (id: number) => {
-        console.log(`Edit user with id ${id}`);
+    const handleEdit = (user: IUser) => {
+        setEditUser(user);
+        setOpenEditDialog(true);
     };
 
-    const handleDelete = (id: number) => {
-        console.log(`Delete user with id ${id}`);
+    const handleDelete = async (id: number) => {
+        try {
+            await AppService.deleteUser(id);
+            setUsers(users.filter(user => user.id !== id));
+        } catch (error) {
+            console.error('Failed to delete user:', error);
+        }
+    };
+
+    const handleCloseEditDialog = () => {
+        setOpenEditDialog(false);
+    };
+
+    const handleSaveEdit = () => {
+
+        setOpenEditDialog(false);
     };
 
     return (
@@ -64,7 +80,7 @@ const UsersPage = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {users.map((user: any) => (
+                        {users.map((user: IUser) => (
                             <TableRow key={user.id}>
                                 <TableCell>{user.id}</TableCell>
                                 <TableCell>{user.username}</TableCell>
@@ -72,7 +88,7 @@ const UsersPage = () => {
                                 <TableCell>{user.last_name}</TableCell>
                                 <TableCell>{user.email}</TableCell>
                                 <TableCell>
-                                    <IconButton onClick={() => handleEdit(user.id)} color="primary">
+                                    <IconButton onClick={() => handleEdit(user)} color="primary">
                                         <EditIcon />
                                     </IconButton>
                                     <IconButton onClick={() => handleDelete(user.id)} color="secondary">
@@ -84,6 +100,20 @@ const UsersPage = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
+            <Dialog open={openEditDialog} onClose={handleCloseEditDialog}>
+                <DialogTitle>Edit User</DialogTitle>
+                <DialogContent>
+
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseEditDialog} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={handleSaveEdit} color="primary">
+                        Save
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Container>
     );
 };
