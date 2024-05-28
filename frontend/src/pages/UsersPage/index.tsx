@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import {
-    Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, IconButton, TextField, Box, Dialog, DialogTitle, DialogContent, DialogActions, MenuItem, Select
+    Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, IconButton, TextField, Box
 } from '@mui/material';
-import { IUser } from '../../models/interfaces';
-import { IBank } from '../../models/interfaces';
+import { IUser, IBank } from '../../models/interfaces';
 import { AppService } from '../../services/app.service';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -58,12 +57,22 @@ const UsersPage = () => {
             });
             setUsers(users.map(user => user.id === updatedUser.id ? updatedUser : user));
             setEditUser(null);
+            setOpenEditDialog(false);
         }
     };
 
     const handleEditChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
         if (editUser) {
             setEditUser({ ...editUser, [e.target.name as string]: e.target.value });
+        }
+    };
+
+    const handleBankChange = (selectedBanks: number[]) => {
+        if (editUser) {
+            setEditUser({
+                ...editUser,
+                banks: selectedBanks.map(id => banks.find(bank => bank.id === id) as IBank)
+            });
         }
     };
 
@@ -117,11 +126,13 @@ const UsersPage = () => {
                 </Table>
             </TableContainer>
             <EditUserDialog
-                open={openEditDialog}
-                onClose={handleCloseEditDialog}
                 user={editUser}
                 banks={banks}
+                open={openEditDialog}
+                onClose={handleCloseEditDialog}
                 onSave={handleSave}
+                onChange={handleEditChange}
+                onBankChange={handleBankChange}
             />
         </Container>
     );

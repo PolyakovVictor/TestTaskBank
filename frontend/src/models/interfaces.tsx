@@ -28,3 +28,14 @@ export interface IUser {
     email: string;
     banks?: Array<IBank | number>;
 }
+
+
+export interface EditUserDialogProps {
+    user: IUser | null;
+    banks: IBank[];
+    open: boolean;
+    onClose: () => void;
+    onSave: () => void;
+    onChange: (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => void;
+    onBankChange: (selectedBanks: number[]) => void;
+}
