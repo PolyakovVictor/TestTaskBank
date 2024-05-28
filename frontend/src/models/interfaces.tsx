@@ -16,7 +16,7 @@ export interface IBank {
     bank_name: string;
     routing_number: string;
     swift_bic: string;
-    users: IUser[];
+    users?: Array<IUser | number>;
 }
 
 export interface IUser {

@@ -6,7 +6,7 @@ import { IUser, IBank } from '../../models/interfaces';
 import { AppService } from '../../services/app.service';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import EditUserDialog from '../../components/UserEditWindow';
+import EditUserDialog from '../../components/EditUserDialog';
 
 const UsersPage = () => {
     const [users, setUsers] = useState<IUser[]>([]);

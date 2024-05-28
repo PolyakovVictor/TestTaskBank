@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, IconButton, TextField, Box } from '@mui/material';
+import {
+    Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, IconButton, TextField, Box
+} from '@mui/material';
 import { IBank } from '../../models/interfaces';
 import { AppService } from '../../services/app.service';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-
+import EditBankDialog from '../../components/EditBankDialog';
 
 const BanksPage = () => {
     const [banks, setBanks] = useState<IBank[]>([]);
     const [addCount, setAddCount] = useState(1);
+    const [editBank, setEditBank] = useState<IBank | null>(null);
+    const [openEditDialog, setOpenEditDialog] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -22,13 +26,14 @@ const BanksPage = () => {
     const handleAddBanks = async () => {
         const newBanks = await AppService.getRandomBanks(addCount);
         newBanks.forEach(async (bank: IBank) => {
-            AppService.uploadBank(bank)
+            await AppService.uploadBank(bank);
         });
         setBanks([...banks, ...newBanks]);
     };
 
-    const handleEdit = (id: number) => {
-        console.log(`Edit bank with id ${id}`);
+    const handleEdit = (bank: IBank) => {
+        setEditBank(bank);
+        setOpenEditDialog(true);
     };
 
     const handleDelete = async (id: number) => {
@@ -37,6 +42,25 @@ const BanksPage = () => {
             setBanks(banks.filter(bank => bank.id !== id));
         } catch (error) {
             console.error('Failed to delete bank:', error);
+        }
+    };
+
+    const handleCloseEditDialog = () => {
+        setOpenEditDialog(false);
+        setEditBank(null);
+    };
+
+    const handleSaveEditDialog = async (updatedBank: IBank) => {
+        try {
+            const updated = await AppService.updateBank(updatedBank.id, {
+                ...updatedBank,
+                users: updatedBank.users?.map(user => (typeof user === 'object' ? user.id : user)) || []
+            });
+            setBanks(banks.map(bank => bank.id === updated.id ? { ...updated, users: updatedBank.users } : bank));
+            setOpenEditDialog(false);
+            setEditBank(null);
+        } catch (error) {
+            console.error('Failed to update bank:', error);
         }
     };
 
@@ -68,14 +92,14 @@ const BanksPage = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {banks.map((bank: any) => (
+                        {banks.map((bank: IBank) => (
                             <TableRow key={bank.id}>
                                 <TableCell>{bank.id}</TableCell>
                                 <TableCell>{bank.bank_name}</TableCell>
                                 <TableCell>{bank.routing_number}</TableCell>
                                 <TableCell>{bank.swift_bic}</TableCell>
                                 <TableCell>
-                                    <IconButton onClick={() => handleEdit(bank.id)} color="primary">
+                                    <IconButton onClick={() => handleEdit(bank)} color="primary">
                                         <EditIcon />
                                     </IconButton>
                                     <IconButton onClick={() => handleDelete(bank.id)} color="secondary">
@@ -87,6 +111,12 @@ const BanksPage = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
+            <EditBankDialog
+                bank={editBank}
+                open={openEditDialog}
+                onClose={handleCloseEditDialog}
+                onSave={handleSaveEditDialog}
+            />
         </Container>
     );
 };
