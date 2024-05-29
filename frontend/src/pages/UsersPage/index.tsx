@@ -49,15 +49,15 @@ const UsersPage = () => {
         setEditUser(null);
     };
 
-    const handleSave = async () => {
+    const handleSaveEditDialog = async () => {
         if (editUser) {
             const updatedUser = await AppService.updateUser(editUser.id, {
                 ...editUser,
                 banks: editUser.banks?.map(bank => (typeof bank === 'object' ? bank.id : bank)) || []
             });
             setUsers(users.map(user => user.id === updatedUser.id ? updatedUser : user));
-            setEditUser(null);
             setOpenEditDialog(false);
+            setEditUser(null);
         }
     };
 
@@ -130,7 +130,7 @@ const UsersPage = () => {
                 banks={banks}
                 open={openEditDialog}
                 onClose={handleCloseEditDialog}
-                onSave={handleSave}
+                onSave={handleSaveEditDialog}
                 onChange={handleEditChange}
                 onBankChange={handleBankChange}
             />

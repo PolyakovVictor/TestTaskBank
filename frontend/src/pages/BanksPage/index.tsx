@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import {
-    Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, IconButton, TextField, Box
+    Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, IconButton, TextField, Box, Snackbar
 } from '@mui/material';
 import { IBank } from '../../models/interfaces';
 import { AppService } from '../../services/app.service';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditBankDialog from '../../components/EditBankDialog';
+import Alert from '@mui/material/Alert';
 
 const BanksPage = () => {
     const [banks, setBanks] = useState<IBank[]>([]);
     const [addCount, setAddCount] = useState(1);
     const [editBank, setEditBank] = useState<IBank | null>(null);
     const [openEditDialog, setOpenEditDialog] = useState(false);
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -38,16 +41,25 @@ const BanksPage = () => {
 
     const handleDelete = async (id: number) => {
         try {
-            await AppService.deleteBank(id);
-            setBanks(banks.filter(bank => bank.id !== id));
+            const bank = banks.find(bank => bank.id === id);
+            if (bank?.users && bank.users.length > 0) {
+                setSnackbarMessage('Cannot delete bank with users attached.');
+                setOpenSnackbar(true);
+            } else {
+                await AppService.deleteBank(id);
+                setBanks(banks.filter(bank => bank.id !== id));
+            }
         } catch (error) {
             console.error('Failed to delete bank:', error);
+            setSnackbarMessage('Failed to delete bank.');
+            setOpenSnackbar(true);
         }
     };
 
     const handleCloseEditDialog = () => {
         setOpenEditDialog(false);
         setEditBank(null);
+        setOpenSnackbar(false);
     };
 
     const handleSaveEditDialog = async (updatedBank: IBank) => {
@@ -62,6 +74,10 @@ const BanksPage = () => {
         } catch (error) {
             console.error('Failed to update bank:', error);
         }
+    };
+
+    const handleCloseSnackbar = () => {
+        setOpenSnackbar(false);
     };
 
     return (
@@ -117,6 +133,11 @@ const BanksPage = () => {
                 onClose={handleCloseEditDialog}
                 onSave={handleSaveEditDialog}
             />
+            <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+                <Alert onClose={handleCloseSnackbar} severity="error">
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
         </Container>
     );
 };

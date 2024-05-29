@@ -19,6 +19,7 @@ const EditBankDialog: React.FC<EditBankDialogProps> = ({ bank, open, onClose, on
     useEffect(() => {
         if (bank) {
             setEditBank(bank);
+            console.log(editBank)
             fetchUsers();
         }
     }, [bank]);

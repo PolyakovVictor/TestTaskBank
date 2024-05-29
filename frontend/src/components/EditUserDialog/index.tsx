@@ -2,7 +2,17 @@ import React from 'react';
 import {
     Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Select, MenuItem
 } from '@mui/material';
-import { IBank, EditUserDialogProps } from '../../models/interfaces';
+import { IBank, IUser } from '../../models/interfaces';
+
+interface EditUserDialogProps {
+    user: IUser | null;
+    banks: IBank[];
+    open: boolean;
+    onClose: () => void;
+    onSave: () => void;
+    onChange: (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => void;
+    onBankChange: (selectedBanks: number[]) => void;
+}
 
 const EditUserDialog: React.FC<EditUserDialogProps> = ({
     user,
@@ -13,6 +23,7 @@ const EditUserDialog: React.FC<EditUserDialogProps> = ({
     onChange,
     onBankChange,
 }) => {
+    console.log(user)
     return (
         <Dialog open={open} onClose={onClose}>
             <DialogTitle>Edit User</DialogTitle>
