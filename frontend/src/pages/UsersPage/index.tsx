@@ -34,8 +34,9 @@ const UsersPage = () => {
         setUsers([...users, ...newUsers]);
     };
 
-    const handleEdit = (user: IUser) => {
-        setEditUser(user);
+    const handleEdit = async (id: number) => {
+        const userDetails = await AppService.getUserById(id);
+        setEditUser(userDetails);
         setOpenEditDialog(true);
     };
 
@@ -49,30 +50,15 @@ const UsersPage = () => {
         setEditUser(null);
     };
 
-    const handleSaveEditDialog = async () => {
-        if (editUser) {
-            const updatedUser = await AppService.updateUser(editUser.id, {
-                ...editUser,
-                banks: editUser.banks?.map(bank => (typeof bank === 'object' ? bank.id : bank)) || []
+    const handleSaveEditDialog = async (updatedUser: IUser) => {
+        if (updatedUser) {
+            const updated = await AppService.updateUser(updatedUser.id, {
+                ...updatedUser,
+                banks: updatedUser.banks?.map(bank => (typeof bank === 'object' ? bank.id : bank)) || []
             });
-            setUsers(users.map(user => user.id === updatedUser.id ? updatedUser : user));
+            setUsers(users.map(user => user.id === updated.id ? updated : user));
             setOpenEditDialog(false);
             setEditUser(null);
-        }
-    };
-
-    const handleEditChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
-        if (editUser) {
-            setEditUser({ ...editUser, [e.target.name as string]: e.target.value });
-        }
-    };
-
-    const handleBankChange = (selectedBanks: number[]) => {
-        if (editUser) {
-            setEditUser({
-                ...editUser,
-                banks: selectedBanks.map(id => banks.find(bank => bank.id === id) as IBank)
-            });
         }
     };
 
@@ -113,7 +99,7 @@ const UsersPage = () => {
                                 <TableCell>{user.last_name}</TableCell>
                                 <TableCell>{user.email}</TableCell>
                                 <TableCell>
-                                    <IconButton onClick={() => handleEdit(user)} color="primary">
+                                    <IconButton onClick={() => handleEdit(user.id)} color="primary">
                                         <EditIcon />
                                     </IconButton>
                                     <IconButton onClick={() => handleDelete(user.id)} color="secondary">
@@ -131,8 +117,6 @@ const UsersPage = () => {
                 open={openEditDialog}
                 onClose={handleCloseEditDialog}
                 onSave={handleSaveEditDialog}
-                onChange={handleEditChange}
-                onBankChange={handleBankChange}
             />
         </Container>
     );

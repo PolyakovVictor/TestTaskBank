@@ -2,10 +2,37 @@ import axios from 'axios'
 import { IAppService, IBank, IUser } from '../models/interfaces';
 
 export const AppService: IAppService = {
+    async getUserById(id) {
+        try {
+            const response = await axios.get(process.env.REACT_APP_API_URL + `/api/users/${id}/`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error when sending a request:', error);
+            throw error;
+        }
+    },
 
     async getUsers() {
         try {
             const response = await axios.get(process.env.REACT_APP_API_URL + 'api/users/', {
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error when sending a request:', error);
+            throw error;
+        }
+    },
+
+    async getBankById(id) {
+        try {
+            const response = await axios.get(process.env.REACT_APP_API_URL + `/api/banks/${id}/`, {
                 headers: {
                     'Content-Type': 'application/json',
                 }

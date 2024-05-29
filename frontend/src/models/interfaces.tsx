@@ -1,10 +1,12 @@
 export interface IAppService {
     getUsers(): Promise<IUser[]>;
     getBanks(): Promise<IBank[]>;
-    uploadBank(data: IBank): Promise<any>;
-    uploadUser(data: IUser): Promise<any>;
+    getUserById(id: number): Promise<IUser>;
+    getBankById(id: number): Promise<IBank>;
     getRandomUsers(count: number): Promise<IUser[]>;
     getRandomBanks(count: number): Promise<IBank[]>;
+    uploadBank(data: IBank): Promise<any>;
+    uploadUser(data: IUser): Promise<any>;
     deleteBank(bankId: number): Promise<any>;
     deleteUser(userId: number): Promise<any>;
     updateUser(id: number, data: Partial<IUser>): Promise<IUser>;
@@ -35,7 +37,5 @@ export interface EditUserDialogProps {
     banks: IBank[];
     open: boolean;
     onClose: () => void;
-    onSave: () => void;
-    onChange: (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => void;
-    onBankChange: (selectedBanks: number[]) => void;
+    onSave: (updatedUser: IUser) => void;
 }

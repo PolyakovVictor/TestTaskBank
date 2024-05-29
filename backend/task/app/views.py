@@ -1,24 +1,26 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from .models import User, Bank
-from .serializers import UserSerializer, UserDetailSerializer, BankSerializer, DetailedBankSerializer
+from .serializers import UserSerializer, BankSerializer, BankDetailSerializer, UserDetailSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
+    serializer_class = UserSerializer
 
     def get_serializer_class(self):
-        if self.action in ['list', 'retrieve']:
+        if self.action == "retrieve":
             return UserDetailSerializer
         return UserSerializer
 
 
 class BankViewSet(viewsets.ModelViewSet):
     queryset = Bank.objects.all()
+    serializer_class = BankSerializer
 
     def get_serializer_class(self):
-        if self.action in ['list', 'retrieve']:
-            return DetailedBankSerializer
+        if self.action == "retrieve":
+            return BankDetailSerializer
         return BankSerializer
 
     def destroy(self, request, *args, **kwargs):

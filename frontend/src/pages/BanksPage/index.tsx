@@ -34,8 +34,9 @@ const BanksPage = () => {
         setBanks([...banks, ...newBanks]);
     };
 
-    const handleEdit = (bank: IBank) => {
-        setEditBank(bank);
+    const handleEdit = async (id: number) => {
+        const bankDetails = await AppService.getBankById(id);
+        setEditBank(bankDetails);
         setOpenEditDialog(true);
     };
 
@@ -115,7 +116,7 @@ const BanksPage = () => {
                                 <TableCell>{bank.routing_number}</TableCell>
                                 <TableCell>{bank.swift_bic}</TableCell>
                                 <TableCell>
-                                    <IconButton onClick={() => handleEdit(bank)} color="primary">
+                                    <IconButton onClick={() => handleEdit(bank.id)} color="primary">
                                         <EditIcon />
                                     </IconButton>
                                     <IconButton onClick={() => handleDelete(bank.id)} color="secondary">

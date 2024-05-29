@@ -1,18 +1,46 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Select, MenuItem
 } from '@mui/material';
 import { EditUserDialogProps, IBank, IUser } from '../../models/interfaces';
+import { AppService } from '../../services/app.service';
 
 const EditUserDialog: React.FC<EditUserDialogProps> = ({
     user,
     banks,
     open,
     onClose,
-    onSave,
-    onChange,
-    onBankChange,
+    onSave
 }) => {
+    const [editUser, setEditUser] = useState<IUser | null>(null);
+
+    useEffect(() => {
+        if (user) {
+            setEditUser(user);
+        }
+    }, [user]);
+
+    const handleEditChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
+        if (editUser) {
+            setEditUser({ ...editUser, [e.target.name as string]: e.target.value });
+        }
+    };
+
+    const handleBankChange = (selectedBanks: number[]) => {
+        if (editUser) {
+            setEditUser({
+                ...editUser,
+                banks: selectedBanks.map(id => banks.find(bank => bank.id === id) as IBank)
+            });
+        }
+    };
+
+    const handleSave = () => {
+        if (editUser) {
+            onSave(editUser);
+        }
+    };
+
     return (
         <Dialog open={open} onClose={onClose}>
             <DialogTitle>Edit User</DialogTitle>
@@ -23,8 +51,8 @@ const EditUserDialog: React.FC<EditUserDialogProps> = ({
                     type="text"
                     fullWidth
                     name="username"
-                    value={user?.username || ''}
-                    onChange={onChange}
+                    value={editUser?.username || ''}
+                    onChange={handleEditChange}
                 />
                 <TextField
                     margin="dense"
@@ -32,8 +60,8 @@ const EditUserDialog: React.FC<EditUserDialogProps> = ({
                     type="text"
                     fullWidth
                     name="first_name"
-                    value={user?.first_name || ''}
-                    onChange={onChange}
+                    value={editUser?.first_name || ''}
+                    onChange={handleEditChange}
                 />
                 <TextField
                     margin="dense"
@@ -41,8 +69,8 @@ const EditUserDialog: React.FC<EditUserDialogProps> = ({
                     type="text"
                     fullWidth
                     name="last_name"
-                    value={user?.last_name || ''}
-                    onChange={onChange}
+                    value={editUser?.last_name || ''}
+                    onChange={handleEditChange}
                 />
                 <TextField
                     margin="dense"
@@ -50,13 +78,13 @@ const EditUserDialog: React.FC<EditUserDialogProps> = ({
                     type="email"
                     fullWidth
                     name="email"
-                    value={user?.email || ''}
-                    onChange={onChange}
+                    value={editUser?.email || ''}
+                    onChange={handleEditChange}
                 />
                 <Select
                     multiple
-                    value={user?.banks?.filter(bank => typeof bank !== 'number').map(bank => (bank as IBank).id) || []}
-                    onChange={(e) => onBankChange(e.target.value as number[])}
+                    value={editUser?.banks?.filter(bank => typeof bank !== 'number').map(bank => (bank as IBank).id) || []}
+                    onChange={(e) => handleBankChange(e.target.value as number[])}
                     fullWidth
                 >
                     {banks.map((bank) => (
@@ -70,7 +98,7 @@ const EditUserDialog: React.FC<EditUserDialogProps> = ({
                 <Button onClick={onClose} color="primary">
                     Cancel
                 </Button>
-                <Button onClick={onSave} color="primary">
+                <Button onClick={handleSave} color="primary">
                     Save
                 </Button>
             </DialogActions>
