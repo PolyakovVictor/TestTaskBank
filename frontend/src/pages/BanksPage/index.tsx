@@ -3,7 +3,7 @@ import {
     Container,Button, TextField, Box, Snackbar
 } from '@mui/material';
 import { IBank } from '../../models/interfaces';
-import { AppService } from '../../services/app.service';
+import { BankService } from '../../services/bank.service';
 import EditBankDialog from '../../components/EditBankDialog';
 import Alert from '@mui/material/Alert';
 import BanksTable from '../../components/BanksTable';
@@ -19,7 +19,7 @@ const BanksPage = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await AppService.getBanks();
+            const response = await BankService.getBanks();
             setBanks(response);
         };
 
@@ -27,15 +27,15 @@ const BanksPage = () => {
     }, []);
 
     const handleAddBanks = async () => {
-        const newBanks = await AppService.getRandomBanks(addCount);
+        const newBanks = await BankService.getRandomBanks(addCount);
         newBanks.forEach(async (bank: IBank) => {
-            await AppService.uploadBank(bank);
+            await BankService.uploadBank(bank);
         });
         setBanks([...banks, ...newBanks]);
     };
 
     const handleEdit = async (id: number) => {
-        const bankDetails = await AppService.getBankById(id);
+        const bankDetails = await BankService.getBankById(id);
         setEditBank(bankDetails);
         setOpenEditDialog(true);
     };
@@ -48,7 +48,7 @@ const BanksPage = () => {
                 setSnackbarMessage('Cannot delete bank with users attached.');
                 setOpenSnackbar(true);
             } else {
-                await AppService.deleteBank(id);
+                await BankService.deleteBank(id);
                 setBanks(banks.filter(bank => bank.id !== id));
             }
         } catch (error) {
@@ -66,7 +66,7 @@ const BanksPage = () => {
 
     const handleSaveEditDialog = async (updatedBank: IBank) => {
         try {
-            const updated = await AppService.updateBank(updatedBank.id, {
+            const updated = await BankService.updateBank(updatedBank.id, {
                 ...updatedBank,
                 users: updatedBank.users?.map(user => (typeof user === 'object' ? user.id : user)) || []
             });

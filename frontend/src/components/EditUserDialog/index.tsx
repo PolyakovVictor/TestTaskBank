@@ -3,7 +3,6 @@ import {
     Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Select, MenuItem, InputLabel, FormControl
 } from '@mui/material';
 import { EditUserDialogProps, IBank, IUser } from '../../models/interfaces';
-import { AppService } from '../../services/app.service';
 
 const EditUserDialog: React.FC<EditUserDialogProps> = ({
     user,

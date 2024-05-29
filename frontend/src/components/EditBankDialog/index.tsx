@@ -2,15 +2,9 @@ import React, { useEffect, useState } from 'react';
 import {
     Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Select, MenuItem, FormControl, InputLabel
 } from '@mui/material';
-import { IBank, IUser } from '../../models/interfaces';
-import { AppService } from '../../services/app.service';
+import { EditBankDialogProps, IBank, IUser } from '../../models/interfaces';
+import { UserService } from '../../services/user.service';
 
-interface EditBankDialogProps {
-    bank: IBank | null;
-    open: boolean;
-    onClose: () => void;
-    onSave: (updatedBank: IBank) => void;
-}
 
 const EditBankDialog: React.FC<EditBankDialogProps> = ({ bank, open, onClose, onSave }) => {
     const [editBank, setEditBank] = useState<IBank | null>(null);
@@ -24,7 +18,7 @@ const EditBankDialog: React.FC<EditBankDialogProps> = ({ bank, open, onClose, on
     }, [bank]);
 
     const fetchUsers = async () => {
-        const usersResponse = await AppService.getUsers();
+        const usersResponse = await UserService.getUsers();
         setUsers(usersResponse);
     };
 

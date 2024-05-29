@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import {
-    Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, IconButton, TextField, Box, Snackbar
+    Container, Button, TextField, Box, Snackbar
 } from '@mui/material';
 import { IUser, IBank } from '../../models/interfaces';
-import { AppService } from '../../services/app.service';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { UserService } from '../../services/user.service';
+import { BankService } from '../../services/bank.service';
 import EditUserDialog from '../../components/EditUserDialog';
 import Alert from '@mui/material/Alert';
 import UsersTable from '../../components/UsersTable';
@@ -21,9 +20,9 @@ const UsersPage = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const usersResponse = await AppService.getUsers();
+            const usersResponse = await UserService.getUsers();
             setUsers(usersResponse);
-            const banksResponse = await AppService.getBanks();
+            const banksResponse = await BankService.getBanks();
             setBanks(banksResponse);
         };
 
@@ -31,21 +30,21 @@ const UsersPage = () => {
     }, []);
 
     const handleAddUsers = async () => {
-        const newUsers = await AppService.getRandomUsers(addCount);
+        const newUsers = await UserService.getRandomUsers(addCount);
         newUsers.forEach(async (user: IUser) => {
-            await AppService.uploadUser(user);
+            await UserService.uploadUser(user);
         });
         setUsers([...users, ...newUsers]);
     };
 
     const handleEdit = async (id: number) => {
-        const userDetails = await AppService.getUserById(id);
+        const userDetails = await UserService.getUserById(id);
         setEditUser(userDetails);
         setOpenEditDialog(true);
     };
 
     const handleDelete = async (id: number) => {
-        await AppService.deleteUser(id);
+        await UserService.deleteUser(id);
         setUsers(users.filter(user => user.id !== id));
     };
 
@@ -57,7 +56,7 @@ const UsersPage = () => {
     const handleSaveEditDialog = async (updatedUser: IUser) => {
         if (updatedUser) {
             try {
-                const updated = await AppService.updateUser(updatedUser.id, {
+                const updated = await UserService.updateUser(updatedUser.id, {
                     ...updatedUser,
                     banks: updatedUser.banks?.map(bank => (typeof bank === 'object' ? bank.id : bank)) || []
                 });
