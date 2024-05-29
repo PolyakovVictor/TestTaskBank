@@ -3,20 +3,23 @@ from .models import User, Bank
 
 
 class BankSerializer(serializers.ModelSerializer):
+    users = serializers.PrimaryKeyRelatedField(many=True, queryset=User.objects.all(), required=False)
+
     class Meta:
         model = Bank
-        fields = ["id", "bank_name", "routing_number", "swift_bic"]
+        fields = ["id", "bank_name", "routing_number", "swift_bic", "users"]
 
 
 class UserSerializer(serializers.ModelSerializer):
+    banks = serializers.PrimaryKeyRelatedField(many=True, queryset=Bank.objects.all(), required=False)
 
     class Meta:
         model = User
-        fields = ["id", "username", "first_name", "last_name", "email"]
+        fields = ["id", "username", "first_name", "last_name", "email", "banks"]
 
 
 class BankDetailSerializer(serializers.ModelSerializer):
-    users = UserSerializer(many=True, read_only=True)
+    users = UserSerializer(many=True)
 
     class Meta:
         model = Bank
@@ -24,7 +27,7 @@ class BankDetailSerializer(serializers.ModelSerializer):
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
-    banks = BankSerializer(many=True, read_only=True)
+    banks = BankSerializer(many=True)
 
     class Meta:
         model = User
