@@ -31,11 +31,22 @@ export interface IUser {
     banks?: Array<IBank | number>;
 }
 
-
 export interface EditUserDialogProps {
     user: IUser | null;
     banks: IBank[];
     open: boolean;
     onClose: () => void;
     onSave: (updatedUser: IUser) => void;
+}
+
+export interface UsersTableProps {
+    users: IUser[];
+    onEdit: (id: number) => void;
+    onDelete: (id: number) => void;
+}
+
+export interface BanksTableProps {
+    banks: IBank[];
+    onEdit: (id: number) => void;
+    onDelete: (id: number) => void;
 }

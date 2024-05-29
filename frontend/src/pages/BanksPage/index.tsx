@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import {
-    Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, IconButton, TextField, Box, Snackbar
+    Container,Button, TextField, Box, Snackbar
 } from '@mui/material';
 import { IBank } from '../../models/interfaces';
 import { AppService } from '../../services/app.service';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
 import EditBankDialog from '../../components/EditBankDialog';
 import Alert from '@mui/material/Alert';
+import BanksTable from '../../components/BanksTable';
 
 const BanksPage = () => {
     const [banks, setBanks] = useState<IBank[]>([]);
@@ -104,37 +103,11 @@ const BanksPage = () => {
                     Add Banks
                 </Button>
             </Box>
-            <TableContainer component={Paper}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>ID</TableCell>
-                            <TableCell>Bank Name</TableCell>
-                            <TableCell>Routing Number</TableCell>
-                            <TableCell>SWIFT/BIC</TableCell>
-                            <TableCell>Actions</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {banks.map((bank: IBank) => (
-                            <TableRow key={bank.id}>
-                                <TableCell>{bank.id}</TableCell>
-                                <TableCell>{bank.bank_name}</TableCell>
-                                <TableCell>{bank.routing_number}</TableCell>
-                                <TableCell>{bank.swift_bic}</TableCell>
-                                <TableCell>
-                                    <IconButton onClick={() => handleEdit(bank.id)} color="primary">
-                                        <EditIcon />
-                                    </IconButton>
-                                    <IconButton onClick={() => handleDelete(bank.id)} color="secondary">
-                                        <DeleteIcon />
-                                    </IconButton>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <BanksTable
+                banks={banks}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+            />
             <EditBankDialog
                 bank={editBank}
                 open={openEditDialog}
