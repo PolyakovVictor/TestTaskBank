@@ -23,7 +23,6 @@ const EditUserDialog: React.FC<EditUserDialogProps> = ({
     onChange,
     onBankChange,
 }) => {
-    console.log(user)
     return (
         <Dialog open={open} onClose={onClose}>
             <DialogTitle>Edit User</DialogTitle>

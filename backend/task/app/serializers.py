@@ -1,42 +1,17 @@
 from rest_framework import serializers
 from .models import User, Bank
 
-
-class UserSerializer(serializers.ModelSerializer):
-    banks = serializers.PrimaryKeyRelatedField(
-        many=True, queryset=Bank.objects.all(), required=False
-    )
-
-    class Meta:
-        model = User
-        fields = [
-            "id",
-            "password",
-            "first_name",
-            "last_name",
-            "username",
-            "email",
-            "banks",
-        ]
-
-
 class BankSerializer(serializers.ModelSerializer):
-    users = UserSerializer(
-        many=True,
-        read_only=True,
-        required=False,
-    )
-    user_ids = serializers.PrimaryKeyRelatedField(
+    users = serializers.PrimaryKeyRelatedField(
         many=True,
         queryset=User.objects.all(),
         write_only=True,
-        source="users",
         required=False,
     )
 
     class Meta:
         model = Bank
-        fields = ["id", "bank_name", "routing_number", "swift_bic", "users", "user_ids"]
+        fields = ["id", "bank_name", "routing_number", "swift_bic", "users"]
 
     def create(self, validated_data):
         user_ids = validated_data.pop("users", [])
@@ -57,3 +32,88 @@ class BankSerializer(serializers.ModelSerializer):
             instance.users.set(user_ids)
 
         return instance
+
+
+class BankDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Bank
+        fields = ["id", "bank_name", "routing_number", "swift_bic"]
+
+
+class UserSerializer(serializers.ModelSerializer):
+    banks = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=Bank.objects.all(),
+        required=False,
+    )
+
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "password",
+            "first_name",
+            "last_name",
+            "username",
+            "email",
+            "banks",
+        ]
+
+    def update(self, instance, validated_data):
+        bank_ids = validated_data.pop("banks", [])
+        instance.password = validated_data.get("password", instance.password)
+        instance.first_name = validated_data.get("first_name", instance.first_name)
+        instance.last_name = validated_data.get("last_name", instance.last_name)
+        instance.username = validated_data.get("username", instance.username)
+        instance.email = validated_data.get("email", instance.email)
+        instance.save()
+
+        if bank_ids:
+            instance.banks.set(bank_ids)
+
+        return instance
+
+
+class UserDetailSerializer(serializers.ModelSerializer):
+    banks = BankDetailSerializer(
+        many=True,
+        read_only=True,
+        required=False,
+    )
+
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "password",
+            "first_name",
+            "last_name",
+            "username",
+            "email",
+            "banks",
+        ]
+
+
+class SimpleUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "password",
+            "first_name",
+            "last_name",
+            "username",
+            "email",
+        ]
+
+
+class DetailedBankSerializer(serializers.ModelSerializer):
+    users = SimpleUserSerializer(
+        many=True,
+        read_only=True,
+        required=False,
+    )
+
+    class Meta:
+        model = Bank
+        fields = ["id", "bank_name", "routing_number", "swift_bic", "users"]
