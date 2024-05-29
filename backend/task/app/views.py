@@ -1,7 +1,12 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from .models import User, Bank
-from .serializers import UserSerializer, BankSerializer, BankDetailSerializer, UserDetailSerializer
+from .serializers import (
+    UserSerializer,
+    BankSerializer,
+    BankDetailSerializer,
+    UserDetailSerializer,
+)
 
 
 class UserViewSet(viewsets.ModelViewSet):

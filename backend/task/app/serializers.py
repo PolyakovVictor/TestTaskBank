@@ -3,7 +3,9 @@ from .models import User, Bank
 
 
 class BankSerializer(serializers.ModelSerializer):
-    users = serializers.PrimaryKeyRelatedField(many=True, queryset=User.objects.all(), required=False)
+    users = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=User.objects.all(), required=False
+    )
 
     class Meta:
         model = Bank
@@ -11,7 +13,9 @@ class BankSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    banks = serializers.PrimaryKeyRelatedField(many=True, queryset=Bank.objects.all(), required=False)
+    banks = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=Bank.objects.all(), required=False
+    )
 
     class Meta:
         model = User
