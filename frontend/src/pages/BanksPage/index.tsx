@@ -7,6 +7,7 @@ import { BankService } from '../../services/bank.service';
 import EditBankDialog from '../../components/EditBankDialog';
 import Alert from '@mui/material/Alert';
 import BanksTable from '../../components/BanksTable';
+import axios from 'axios';
 
 const BanksPage = () => {
     const [banks, setBanks] = useState<IBank[]>([]);
@@ -27,11 +28,22 @@ const BanksPage = () => {
     }, []);
 
     const handleAddBanks = async () => {
-        const newBanks = await BankService.getRandomBanks(addCount);
-        newBanks.forEach(async (bank: IBank) => {
-            await BankService.uploadBank(bank);
-        });
-        setBanks([...banks, ...newBanks]);
+        try {
+            const newBanks = await BankService.getRandomBanks(addCount);
+            newBanks.forEach(async (bank: IBank) => {
+                await BankService.uploadBank(bank);
+            });
+            setBanks([...banks, ...newBanks]);
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response?.status === 429) {
+                setSnackbarMessage('Too many requests. Please try again later.');
+                setSnackbarType('error');
+            } else {
+                setSnackbarMessage('An error occurred while adding users.');
+                setSnackbarType('error');
+            }
+            setOpenSnackbar(true);
+        }
     };
 
     const handleEdit = async (id: number) => {

@@ -13,6 +13,7 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+    # Change the serializer class based on the action
     def get_serializer_class(self):
         if self.action == "retrieve":
             return UserDetailSerializer
@@ -28,6 +29,7 @@ class BankViewSet(viewsets.ModelViewSet):
             return BankDetailSerializer
         return BankSerializer
 
+    # Overriding the 'destroy' method
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         if instance.users.exists():

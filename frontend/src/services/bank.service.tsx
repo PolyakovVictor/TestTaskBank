@@ -2,7 +2,6 @@ import axios from 'axios'
 import { IBankService, IBank } from '../models/interfaces';
 
 export const BankService: IBankService = {
-
     async getBankById(id) {
         try {
             const response = await axios.get(process.env.REACT_APP_API_URL + `/api/banks/${id}/`, {

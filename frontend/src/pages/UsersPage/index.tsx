@@ -8,6 +8,7 @@ import { BankService } from '../../services/bank.service';
 import EditUserDialog from '../../components/EditUserDialog';
 import Alert from '@mui/material/Alert';
 import UsersTable from '../../components/UsersTable';
+import axios from 'axios';
 
 const UsersPage = () => {
     const [users, setUsers] = useState<IUser[]>([]);
@@ -17,6 +18,7 @@ const UsersPage = () => {
     const [openEditDialog, setOpenEditDialog] = useState(false);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarType, setSnackbarType] = useState<'success' | 'error' | 'warning' | 'info'>('success');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -30,11 +32,22 @@ const UsersPage = () => {
     }, []);
 
     const handleAddUsers = async () => {
-        const newUsers = await UserService.getRandomUsers(addCount);
-        newUsers.forEach(async (user: IUser) => {
-            await UserService.uploadUser(user);
-        });
-        setUsers([...users, ...newUsers]);
+        try{
+            const newUsers = await UserService.getRandomUsers(addCount);
+            newUsers.forEach(async (user: IUser) => {
+                await UserService.uploadUser(user);
+            });
+            setUsers([...users, ...newUsers]);
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response?.status === 429) {
+                setSnackbarMessage('Too many requests. Please try again later.');
+                setSnackbarType('error');
+            } else {
+                setSnackbarMessage('An error occurred while adding users.');
+                setSnackbarType('error');
+            }
+            setSnackbarOpen(true);
+        }
     };
 
     const handleEdit = async (id: number) => {
@@ -110,7 +123,7 @@ const UsersPage = () => {
                 autoHideDuration={6000}
                 onClose={handleSnackbarClose}
             >
-                <Alert onClose={handleSnackbarClose} severity="success">
+                <Alert onClose={handleSnackbarClose} severity={snackbarType}>
                     {snackbarMessage}
                 </Alert>
             </Snackbar>
