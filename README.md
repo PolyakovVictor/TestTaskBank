@@ -13,7 +13,7 @@
 Example .env file
 
 # these variables are needed for connect to db
-POSTGRES_DB='OnlineBanking'
+POSTGRES_DB='TestTaskBank'
 POSTGRES_USER='admin'
 POSTGRES_PASSWORD='admin'
 POSTGRES_HOST='localhost'
