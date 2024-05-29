@@ -16,6 +16,7 @@ const BanksPage = () => {
     const [openEditDialog, setOpenEditDialog] = useState(false);
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarType, setSnackbarType] = useState<'success' | 'error' | 'warning' | 'info'>('success');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -44,6 +45,7 @@ const BanksPage = () => {
         try {
             const bank = banks.find(bank => bank.id === id);
             if (bank?.users && bank.users.length > 0) {
+                setSnackbarType('error');
                 setSnackbarMessage('Cannot delete bank with users attached.');
                 setOpenSnackbar(true);
             } else {
@@ -72,8 +74,13 @@ const BanksPage = () => {
             setBanks(banks.map(bank => bank.id === updated.id ? { ...updated, users: updatedBank.users } : bank));
             setOpenEditDialog(false);
             setEditBank(null);
+            setSnackbarType('success');
+            setSnackbarMessage('Bank updated successfully.');
+            setOpenSnackbar(true);
         } catch (error) {
             console.error('Failed to update bank:', error);
+            setSnackbarMessage('Failed to update bank.');
+            setOpenSnackbar(true);
         }
     };
 
@@ -135,7 +142,7 @@ const BanksPage = () => {
                 onSave={handleSaveEditDialog}
             />
             <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
-                <Alert onClose={handleCloseSnackbar} severity="error">
+                <Alert onClose={handleCloseSnackbar} severity={snackbarType}>
                     {snackbarMessage}
                 </Alert>
             </Snackbar>
@@ -144,3 +151,4 @@ const BanksPage = () => {
 };
 
 export default BanksPage;
+

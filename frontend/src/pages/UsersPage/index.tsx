@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import {
-    Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, IconButton, TextField, Box
+    Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, IconButton, TextField, Box, Snackbar
 } from '@mui/material';
 import { IUser, IBank } from '../../models/interfaces';
 import { AppService } from '../../services/app.service';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditUserDialog from '../../components/EditUserDialog';
+import Alert from '@mui/material/Alert';
 
 const UsersPage = () => {
     const [users, setUsers] = useState<IUser[]>([]);
@@ -14,6 +15,8 @@ const UsersPage = () => {
     const [addCount, setAddCount] = useState(1);
     const [editUser, setEditUser] = useState<IUser | null>(null);
     const [openEditDialog, setOpenEditDialog] = useState(false);
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -52,14 +55,26 @@ const UsersPage = () => {
 
     const handleSaveEditDialog = async (updatedUser: IUser) => {
         if (updatedUser) {
-            const updated = await AppService.updateUser(updatedUser.id, {
-                ...updatedUser,
-                banks: updatedUser.banks?.map(bank => (typeof bank === 'object' ? bank.id : bank)) || []
-            });
-            setUsers(users.map(user => user.id === updated.id ? updated : user));
-            setOpenEditDialog(false);
-            setEditUser(null);
+            try {
+                const updated = await AppService.updateUser(updatedUser.id, {
+                    ...updatedUser,
+                    banks: updatedUser.banks?.map(bank => (typeof bank === 'object' ? bank.id : bank)) || []
+                });
+                setUsers(users.map(user => user.id === updated.id ? updated : user));
+                setOpenEditDialog(false);
+                setEditUser(null);
+                setSnackbarMessage('User details updated successfully.');
+                setSnackbarOpen(true);
+            } catch (error) {
+                console.error('Failed to update user:', error);
+                setSnackbarMessage('Failed to update user details.');
+                setSnackbarOpen(true);
+            }
         }
+    };
+
+    const handleSnackbarClose = () => {
+        setSnackbarOpen(false);
     };
 
     return (
@@ -118,6 +133,15 @@ const UsersPage = () => {
                 onClose={handleCloseEditDialog}
                 onSave={handleSaveEditDialog}
             />
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={6000}
+                onClose={handleSnackbarClose}
+            >
+                <Alert onClose={handleSnackbarClose} severity="success">
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
         </Container>
     );
 };
