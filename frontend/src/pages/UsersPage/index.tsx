@@ -32,12 +32,17 @@ const UsersPage = () => {
     }, []);
 
     const handleAddUsers = async () => {
-        try{
+        try {
             const newUsers = await UserService.getRandomUsers(addCount);
-            newUsers.forEach(async (user: IUser) => {
-                await UserService.uploadUser(user);
-            });
-            setUsers([...users, ...newUsers]);
+    
+            const addedUsers = await Promise.all(newUsers.map(async (user) => {
+                const savedUser = await UserService.uploadUser(user);
+                return savedUser;
+            }));
+    
+            setUsers([...users, ...addedUsers]);
+            setSnackbarMessage('Users added successfully.');
+            setSnackbarType('success');
         } catch (error) {
             if (axios.isAxiosError(error) && error.response?.status === 429) {
                 setSnackbarMessage('Too many requests. Please try again later.');
@@ -49,7 +54,7 @@ const UsersPage = () => {
             setSnackbarOpen(true);
         }
     };
-
+    
     const handleEdit = async (id: number) => {
         const userDetails = await UserService.getUserById(id);
         setEditUser(userDetails);

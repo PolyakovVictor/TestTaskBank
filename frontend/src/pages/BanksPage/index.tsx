@@ -30,21 +30,28 @@ const BanksPage = () => {
     const handleAddBanks = async () => {
         try {
             const newBanks = await BankService.getRandomBanks(addCount);
-            newBanks.forEach(async (bank: IBank) => {
-                await BankService.uploadBank(bank);
-            });
-            setBanks([...banks, ...newBanks]);
+    
+            const addedBanks = await Promise.all(newBanks.map(async (bank) => {
+                const savedBank = await BankService.uploadBank(bank);
+                return savedBank;
+            }));
+    
+            setBanks([...banks, ...addedBanks]);
+            setSnackbarMessage('Banks added successfully.');
+            setSnackbarType('success');
+            setOpenSnackbar(true);
         } catch (error) {
             if (axios.isAxiosError(error) && error.response?.status === 429) {
                 setSnackbarMessage('Too many requests. Please try again later.');
                 setSnackbarType('error');
             } else {
-                setSnackbarMessage('An error occurred while adding users.');
+                setSnackbarMessage('An error occurred while adding banks.');
                 setSnackbarType('error');
             }
             setOpenSnackbar(true);
         }
     };
+    
 
     const handleEdit = async (id: number) => {
         const bankDetails = await BankService.getBankById(id);
