@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-    Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Select, MenuItem
+    Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Select, MenuItem, InputLabel, FormControl
 } from '@mui/material';
 import { EditUserDialogProps, IBank, IUser } from '../../models/interfaces';
 import { AppService } from '../../services/app.service';
@@ -81,18 +81,23 @@ const EditUserDialog: React.FC<EditUserDialogProps> = ({
                     value={editUser?.email || ''}
                     onChange={handleEditChange}
                 />
-                <Select
-                    multiple
-                    value={editUser?.banks?.filter(bank => typeof bank !== 'number').map(bank => (bank as IBank).id) || []}
-                    onChange={(e) => handleBankChange(e.target.value as number[])}
-                    fullWidth
-                >
-                    {banks.map((bank) => (
-                        <MenuItem key={bank.id} value={bank.id}>
-                            {bank.bank_name}
-                        </MenuItem>
-                    ))}
-                </Select>
+                <FormControl fullWidth>
+                    <InputLabel id="banks-label">Banks</InputLabel>
+                    <Select
+                        multiple
+                        value={editUser?.banks?.filter(bank => typeof bank !== 'number').map(bank => (bank as IBank).id) || []}
+                        onChange={(e) => handleBankChange(e.target.value as number[])}
+                        fullWidth
+                        labelId="banks-label"
+                        label="Banks"
+                    >
+                        {banks.map((bank) => (
+                            <MenuItem key={bank.id} value={bank.id}>
+                                {bank.bank_name}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose} color="primary">

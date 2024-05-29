@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-    Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Select, MenuItem
+    Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Select, MenuItem, FormControl, InputLabel
 } from '@mui/material';
 import { IBank, IUser } from '../../models/interfaces';
 import { AppService } from '../../services/app.service';
@@ -80,18 +80,22 @@ const EditBankDialog: React.FC<EditBankDialogProps> = ({ bank, open, onClose, on
                     value={editBank?.swift_bic || ''}
                     onChange={handleEditChange}
                 />
-                <Select
-                    multiple
-                    value={editBank?.users?.filter(user => typeof user !== 'number').map(user => (user as IUser).id) || []}
-                    onChange={(e) => handleUserChange(e.target.value as number[])}
-                    fullWidth
-                >
-                    {users.map((user) => (
+                <FormControl fullWidth>
+                    <InputLabel id="users-label">Users</InputLabel>
+                    <Select
+                        multiple
+                        value={editBank?.users?.filter(user => typeof user !== 'number').map(user => (user as IUser).id) || []}
+                        onChange={(e) => handleUserChange(e.target.value as number[])}
+                        labelId="users-label"
+                        label="Users"
+                    >
+                        {users.map((user) => (
                         <MenuItem key={user.id} value={user.id}>
                             {user.username}
                         </MenuItem>
-                    ))}
-                </Select>
+                        ))}
+                    </Select>
+                </FormControl>
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose} color="primary">
