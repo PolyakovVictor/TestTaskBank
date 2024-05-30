@@ -27,6 +27,7 @@ const BanksPage = () => {
         fetchData();
     }, []);
 
+    // Handle adding new banks
     const handleAddBanks = async () => {
         try {
             const newBanks = await BankService.getRandomBanks(addCount);
@@ -52,13 +53,14 @@ const BanksPage = () => {
         }
     };
     
-
+    // Handle editing a bank
     const handleEdit = async (id: number) => {
         const bankDetails = await BankService.getBankById(id);
         setEditBank(bankDetails);
         setOpenEditDialog(true);
     };
 
+    // Handle deleting a bank
     const handleDelete = async (id: number) => {
         try {
             const bank = banks.find(bank => bank.id === id);
@@ -77,12 +79,14 @@ const BanksPage = () => {
         }
     };
 
+    // Handle closing the edit dialog
     const handleCloseEditDialog = () => {
         setOpenEditDialog(false);
         setEditBank(null);
         setOpenSnackbar(false);
     };
 
+    // Handle saving the edited bank
     const handleSaveEditDialog = async (updatedBank: IBank) => {
         try {
             const updated = await BankService.updateBank(updatedBank.id, {

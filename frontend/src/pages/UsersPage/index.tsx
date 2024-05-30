@@ -20,6 +20,7 @@ const UsersPage = () => {
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarType, setSnackbarType] = useState<'success' | 'error' | 'warning' | 'info'>('success');
 
+    // Fetch initial users and banks data on component mount
     useEffect(() => {
         const fetchData = async () => {
             const usersResponse = await UserService.getUsers();
@@ -31,6 +32,7 @@ const UsersPage = () => {
         fetchData();
     }, []);
 
+    // Handle adding new users
     const handleAddUsers = async () => {
         try {
             const newUsers = await UserService.getRandomUsers(addCount);
@@ -55,12 +57,14 @@ const UsersPage = () => {
         }
     };
     
+    // Handle opening the edit dialog for a user
     const handleEdit = async (id: number) => {
         const userDetails = await UserService.getUserById(id);
         setEditUser(userDetails);
         setOpenEditDialog(true);
     };
 
+    // Handle deleting a user
     const handleDelete = async (id: number) => {
         await UserService.deleteUser(id);
         setUsers(users.filter(user => user.id !== id));
@@ -71,6 +75,7 @@ const UsersPage = () => {
         setEditUser(null);
     };
 
+    // Handle saving the edited user data
     const handleSaveEditDialog = async (updatedUser: IUser) => {
         if (updatedUser) {
             try {
