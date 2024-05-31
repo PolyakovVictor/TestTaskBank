@@ -20,6 +20,16 @@ POSTGRES_HOST='localhost'
 POSTGRES_PORT='5432'
 ```
 
+#### and another .env file in the frontend/ directory:
+```plaintext
+
+Example .env file
+
+REACT_APP_API_URL=http://127.0.0.1:8000/
+
+```
+
+
 #### Build and run Docker containers:
 
 ```sh
