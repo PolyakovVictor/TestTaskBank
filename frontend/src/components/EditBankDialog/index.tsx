@@ -3,7 +3,7 @@ import {
     Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Select, MenuItem, FormControl, InputLabel
 } from '@mui/material';
 import { EditBankDialogProps, IBank, IUser } from '../../models/interfaces';
-import { UserService } from '../../services/user.service';
+import { UserService } from '../../services/User.service';
 
 
 const EditBankDialog: React.FC<EditBankDialogProps> = ({ bank, open, onClose, onSave }) => {

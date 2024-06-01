@@ -1,22 +1,23 @@
 export interface IBankService {
     getBanks(): Promise<IBank[]>;
     getBankById(id: number): Promise<IBank>;
-    getRandomBanks(count: number): Promise<IBank[]>;
     uploadBank(data: IBank): Promise<any>;
     deleteBank(bankId: number): Promise<any>;
     updateBank(id: number, data: IBank): Promise<any>;
 }
 
-
 export interface IUserService {
     getUsers(): Promise<IUser[]>;
     getUserById(id: number): Promise<IUser>;
-    getRandomUsers(count: number): Promise<IUser[]>;
     uploadUser(data: IUser): Promise<any>;
     deleteUser(userId: number): Promise<any>;
     updateUser(id: number, data: Partial<IUser>): Promise<IUser>;
 }
 
+export interface IRandomDataService {
+    getRandomUsers(count: number): Promise<IUser[]>;
+    getRandomBanks(count: number): Promise<IBank[]>;
+}
 
 export interface IBank {
     id: number;
