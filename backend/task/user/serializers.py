@@ -21,7 +21,6 @@ class UserDetailSerializer(serializers.ModelSerializer):
         fields = ["id", "username", "first_name", "last_name", "email", "banks"]
 
     def get_banks(self, obj):
-        print("test bank")
         from bank.serializers import BankSerializer
 
         banks = obj.banks.all()
