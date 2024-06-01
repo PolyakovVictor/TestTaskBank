@@ -1,23 +1,10 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from .models import User, Bank
+from .models import Bank
 from .serializers import (
-    UserSerializer,
     BankSerializer,
     BankDetailSerializer,
-    UserDetailSerializer,
 )
-
-
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-    # Change the serializer class based on the action
-    def get_serializer_class(self):
-        if self.action == "retrieve":
-            return UserDetailSerializer
-        return UserSerializer
 
 
 class BankViewSet(viewsets.ModelViewSet):
