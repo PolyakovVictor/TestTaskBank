@@ -35,11 +35,6 @@ REACT_APP_API_URL=http://127.0.0.1:8000/
 ```sh
 docker-compose up --build -d
 ```
-#### After the first run, make migrations to the database:
-
-```sh
-docker-compose exec backend python manage.py migrate --noinput
-```
 
 #### Now you can go to
 
