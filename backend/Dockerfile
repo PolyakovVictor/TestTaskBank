@@ -6,7 +6,7 @@ ENV LC_ALL=C.UTF-8
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y python3-venv
+RUN apt-get update && apt-get install -y python3-venv netcat-openbsd
 
 COPY . /app/
 
@@ -22,4 +22,7 @@ EXPOSE 8000
 
 WORKDIR /app/task
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]

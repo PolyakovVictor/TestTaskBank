@@ -3,7 +3,8 @@ import {
     Container,Button, TextField, Box, Snackbar
 } from '@mui/material';
 import { IBank } from '../../models/interfaces';
-import { BankService } from '../../services/bank.service';
+import { BankService } from '../../services/Bank.service';
+import { RandomDataService } from '../../services/RandomData.service';
 import EditBankDialog from '../../components/EditBankDialog';
 import Alert from '@mui/material/Alert';
 import BanksTable from '../../components/BanksTable';
@@ -30,7 +31,7 @@ const BanksPage = () => {
     // Handle adding new banks
     const handleAddBanks = async () => {
         try {
-            const newBanks = await BankService.getRandomBanks(addCount);
+            const newBanks = await RandomDataService.getRandomBanks(addCount);
     
             const addedBanks = await Promise.all(newBanks.map(async (bank) => {
                 const savedBank = await BankService.uploadBank(bank);

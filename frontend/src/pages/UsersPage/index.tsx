@@ -3,8 +3,9 @@ import {
     Container, Button, TextField, Box, Snackbar
 } from '@mui/material';
 import { IUser, IBank } from '../../models/interfaces';
-import { UserService } from '../../services/user.service';
-import { BankService } from '../../services/bank.service';
+import { UserService } from '../../services/User.service';
+import { BankService } from '../../services/Bank.service';
+import { RandomDataService } from '../../services/RandomData.service';
 import EditUserDialog from '../../components/EditUserDialog';
 import Alert from '@mui/material/Alert';
 import UsersTable from '../../components/UsersTable';
@@ -35,7 +36,7 @@ const UsersPage = () => {
     // Handle adding new users
     const handleAddUsers = async () => {
         try {
-            const newUsers = await UserService.getRandomUsers(addCount);
+            const newUsers = await RandomDataService.getRandomUsers(addCount);
     
             const addedUsers = await Promise.all(newUsers.map(async (user) => {
                 const savedUser = await UserService.uploadUser(user);
