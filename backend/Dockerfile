@@ -6,7 +6,7 @@ ENV LC_ALL=C.UTF-8
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y python3-venv netcat-openbsd
+RUN apt-get update && apt-get install -y python3-venv netcat-openbsd dos2unix
 
 COPY . /app/
 
@@ -23,6 +23,8 @@ EXPOSE 8000
 WORKDIR /app/task
 
 COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
 
-ENTRYPOINT ["/entrypoint.sh"]
+RUN dos2unix ../entrypoint.sh
+RUN chmod +x ../entrypoint.sh
+
+ENTRYPOINT ["sh", "../entrypoint.sh"]
